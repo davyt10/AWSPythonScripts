@@ -1,0 +1,42 @@
+#!/usr/bin/python
+
+
+import boto.ec2
+import collections
+from boto.ec2.connection import EC2Connection
+from boto.ec2.regioninfo import RegionInfo
+from boto.ec2.snapshot import Snapshot
+import datetime
+from functools import cmp_to_key
+import sys
+aws_access_key_id='',
+aws_secret_access_key=''
+
+
+ec2 = boto.ec2.connect_to_region('eu-west-1')
+snapshots = ec2.get_all_snapshots(filters={"tag:Application": 'Quest',"tag:MakeSnapshot": 'DevTest14' })
+print len(snapshots)
+
+
+user_time = str (input("Enter datetime from when you want to delete, like this format 2015-3-4 14:00:00"))
+real_user_time = datetime.datetime.strptime(user_time, '%Y-%m-%d %H:%M:%S')
+
+endtime = str (input("Enter recent datetime from when you want to keep, like this format 2015-3-4 14:00:00"))
+real_end_time = datetime.datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
+
+NoDeleted = []
+
+for snap in snapshots:
+    start_time = datetime.datetime.strptime(snap.start_time[:-5], '%Y-%m-%dT%H:%M:%S')
+    status = snap.status
+    #description = snap.description
+    #print (start_time)
+    #print (description)
+    #print (snap.id)
+    if (start_time > real_user_time and start_time < real_end_time):
+        NoDeleted.append(snap.id )
+
+        print "Deleted snapshot_id %s and  status %s and start time %s and  real_user_time %s" % (snap.id , status, start_time, real_user_time)
+        #snap.delete()
+
+print len (NoDeleted)
