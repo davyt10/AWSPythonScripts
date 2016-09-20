@@ -1,0 +1,52 @@
+#!/usr/bin/python
+
+
+import boto3
+import json
+import sys
+import pprint
+import collections
+print('Python %s on %s' % (sys.version, sys.platform))
+print ('boto version', boto3.__version__)
+
+region_list = ['eu-west-1', 'us-east-1']
+
+client = boto3.client('ec2', aws_access_key_id='xxxx',aws_secret_access_key='xxxx')
+
+Application = str (input("What Application tag does the Environment you wish to stop have : "))
+Env = str (input("What Environment tag does the Environment you wish to stop have : "))
+
+print "Are you sure you want to stop %s Environment  in %Application " % (Application, Env)
+print ("Are you sure you want to stop Environment: " + Env + " Environment under Application " + Application + "tag")
+
+
+instances = client.describe_instances(Filters=[{'Name':'tag-key' , 'Values': ['Application']},{'Name':'tag-value' , 'Values': ['Quest']},{'Name':'tag-key' , 'Values': ['Environment']},{'Name':'tag-value' , 'Values': ['DV02']} ])
+
+Reservations = instances['Reservations'] #extract Resveration keys from Dict
+
+print ("The number of instances to stop/start is ", len(Reservations)) #response is a list
+#print (response[0])
+InstanceToStopFilter = []
+
+for i in Reservations:
+    Instances = (i['Instances']) #Instances is  a dict
+    for id in Instances: #iterate thru dict and print
+        tags = (id['Tags'])
+        tagsDict = {x['Key']: x for x in tags}
+        type = (id['InstanceType'])
+        state = (id['State'])
+        print ("The Instance Name to stop/start is ",(tagsDict['Name']['Value']), "-", id['InstanceId'], "and Instance type is :", type , "and its current states is", state )
+        InstanceToStopFilter.append(id['InstanceId'])
+
+confirm = str (input("Are you sure you want to stop above instances, please type yes or no? : "))
+
+
+
+
+
+if confirm == 'yes':
+    print ("OK")
+    filter
+    for id in Instances: #iterate thru dict and print
+        stop =  client.stop_instances(InstanceIds=InstanceToStopFilter)
+        print ("stopping Instances")
