@@ -1,0 +1,69 @@
+#!/usr/bin/python
+
+
+import boto3
+import json
+import sys
+
+
+client = boto3.client('ec2', aws_access_key_id='xxxxxxxxxxxxx,aws_secret_access_key='xxxxxxxxxxxxxxxxxxxxx')
+instances = client.describe_instances(Filters=[{'Name':'tag-key' , 'Values': ['Application']},{'Name':'tag-value' , 'Values': ['AppName']}])
+
+Reservations = instances['Reservations']
+m42xlarge = []
+m4xlarge = []
+t2medium = []
+t2large = []
+c3large = []
+c3xlarge = []
+c32xlarge = []
+c4large = []
+c4xlarge = []
+r3xlarge = []
+r3large = []
+m3medium = []
+
+
+for i in Reservations:
+    Instances = (i['Instances']) #Instances is  a dict
+    for id in Instances: #iterate thru dict and print
+        az = (id['Placement'])
+        print(az['AvailabilityZone'])
+        type = (id['InstanceType'])
+        if type == "m4.xlarge":
+            m4xlarge.append(type)
+        if type == "m4.2xlarge":
+            m42xlarge.append(type)
+        if type == "m3.medium":
+            m3medium.append(type)
+        if type == "t2.medium":
+            t2medium.append(type)
+        if type == "c3.large":
+            c3large.append(type)
+        if type == "c3.xlarge":
+            c3xlarge.append(type)
+        if type == "c3.2xlarge":
+            c32xlarge.append(type)
+        if type == "c4.large":
+            c4large.append(type)
+        if type == "c4.xlarge":
+            c4xlarge.append(type)
+        if type == "t2.large":
+            t2large.append(type)
+        if type == "r3.xlarge":
+            r3xlarge.append(type)
+        if type == "r3.large":
+            r3large.append(type)
+
+print("t2.medium - ", len(list(t2medium)))
+print("t2.large - ", len(list(t2large)))
+print("m3.medium - ", len(list(m3medium)))
+print("m4.2xlarge - ", len(list(m42xlarge)))
+print("m4.xlarge - ", len(list(m4xlarge)))
+print("c3.large - ", len(list(c3large)))
+print("c3.xlarge - ", len(list(c3xlarge)))
+print("c3.2xlarge - ", len(list(c32xlarge)))
+print("c4.large - ", len(list(c4large)))
+print("c4.xlarge -", len(list(c4xlarge)))
+print("r3.xlarge - ", len(list(r3xlarge)))
+print("r3.large - ", len(list(r3large)))
