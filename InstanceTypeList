@@ -1,0 +1,47 @@
+#!/usr/bin/python
+import boto3
+import json
+import sys
+import pprint
+import collections
+print('Python %s on %s' % (sys.version, sys.platform))
+print ('Boto Version',boto3.__version__)
+
+def Create_Data(item):
+    Type = (item['InstanceType'])
+    Placement = (item['Placement'])  # placement is a dict
+    Plat = (item.get('Platform', 'Linux'))
+    Az = (Placement['AvailabilityZone'])
+    return (Type, Az, Plat)
+
+
+client_US = boto3.client('ec2', aws_access_key_id='xxxxxxxxxxxxxx',aws_secret_access_key='xxxxxxxxxxxxxxxxxxxxxxxx', region_name='us-east-1')
+client_EU = boto3.client('ec2', aws_access_key_id='xxxxxxxxxxxxxx',aws_secret_access_key='xxxxxxxxxxxxxxxxxxxxxxxx', region_name='eu-west-1')
+
+
+
+Regions = [client_US,client_EU]
+regionData = []
+for r in Regions:
+    instances = r.describe_instances(Filters=[{'Name':'instance-type' , 'Values': ['m4.2xlarge','t2.medium','t2.large','r3.xlarge','r3.large']} ])
+    regionData.append(instances)
+#pprint.pprint(instances)
+regionReservations = [z['Reservations'] for z in regionData]
+
+print ("Number of region rev ", len(regionReservations)) #response is a list
+#print (Reservations)
+
+
+InstanceTypeAz = []
+for rr in regionReservations:
+    for res in rr:
+        InstanceTypeAz.extend([Create_Data(inst) for inst in res['Instances']])
+
+
+#print(InstanceTypeAz)
+pprint.pprint(collections.Counter(InstanceTypeAz))
+#print (len(InstanceTypeAz))
+
+#pprint.pprint(InstanceTypeAz)
+
+
