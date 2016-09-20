@@ -46,7 +46,6 @@ confirm = str (input("Are you sure you want to stop above instances, please type
 
 if confirm == 'yes':
     print ("OK")
-    filter
-    for id in Instances: #iterate thru dict and print
+      for id in Instances: #iterate thru dict and print
         stop =  client.stop_instances(InstanceIds=InstanceToStopFilter)
         print ("stopping Instances")
