@@ -9,12 +9,12 @@ from boto.ec2.snapshot import Snapshot
 import datetime
 from functools import cmp_to_key
 import sys
-aws_access_key_id='',
-aws_secret_access_key=''
+aws_access_key_id='xxxxxxxxxxxxx',
+aws_secret_access_key='xxxxxxxxxxxxxx'
 
 
 ec2 = boto.ec2.connect_to_region('eu-west-1')
-snapshots = ec2.get_all_snapshots(filters={"tag:Application": 'Quest',"tag:MakeSnapshot": 'DevTest14' })
+snapshots = ec2.get_all_snapshots(filters={"tag:Application": 'Applicationtag',"tag:MakeSnapshot": 'DevTest14' })
 print len(snapshots)
 
 
