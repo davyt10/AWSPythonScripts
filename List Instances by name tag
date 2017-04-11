@@ -1,6 +1,5 @@
-#!/usr/bin/python
-
 import boto3
+import argparse
 import json
 import sys
 import pprint
@@ -9,19 +8,23 @@ print('Python %s on %s' % (sys.version, sys.platform))
 print ('Boto Version',boto3.__version__)
 
 
+import argparse
 
-ec2 = boto3.resource('ec2', aws_access_key_id='XXXXXXXXX',aws_secret_access_key='XXXXXXXXXXXX', region_name='eu-west-1')
-base = ec2.instances.filter(Filters=[{'Name':'tag-key' , 'Values': ['Application']},{'Name':'tag-value' , 'Values': ['YourAppTagValue']},{'Name':'tag-key' , 'Values': ['Environment']},{'Name':'tag-value' , 'Values': ['QA06']} ])
+parser = argparse.ArgumentParser()
+parser.add_argument("EnvName", help="Enter Env name")
+parser.add_argument("Region", help="Enter Region")
+args = parser.parse_args()
 
+ec2 = boto3.resource('ec2', region_name=(args.Region))
+base = ec2.instances.filter(Filters=[{'Name':'tag-key' , 'Values': ['Application']},{'Name':'tag-value' , 'Values': ['App']},{'Name':'tag-key' , 'Values': ['Environment']},{'Name':'tag-value' , 'Values': [(args.EnvName)]} ])
 # convert a set of key/value pairs to a dictionary
 def Tags2Dict(data):
     return {t['Key']: t['Value'] for t in data}
 
-print (base)
-print('All instances:')
 for instance in base:
     instanceTags = Tags2Dict(instance.tags)
     print(instance.id,instanceTags["Name"] , instance.private_ip_address)
+
 
 
 
