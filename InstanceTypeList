@@ -15,21 +15,23 @@ def Create_Data(item):
     return (Type, Az, Plat)
 
 
-client_US = boto3.client('ec2', aws_access_key_id='xxxxxxxxxxxxxx',aws_secret_access_key='xxxxxxxxxxxxxxxxxxxxxxxx', region_name='us-east-1')
-client_EU = boto3.client('ec2', aws_access_key_id='xxxxxxxxxxxxxx',aws_secret_access_key='xxxxxxxxxxxxxxxxxxxxxxxx', region_name='eu-west-1')
+client_US = boto3.client('ec2', region_name='us-east-1')
+client_EU = boto3.client('ec2', region_name='eu-west-1')
 
 
 
-Regions = [client_US,client_EU]
+Regions = [client_EU,client_US,]
 regionData = []
 for r in Regions:
-    instances = r.describe_instances(Filters=[{'Name':'instance-type' , 'Values': ['m4.2xlarge','t2.medium','t2.large','r3.xlarge','r3.large']} ])
+    instances = r.describe_instances(Filters=[{'Name':'instance-type' , 'Values': ['t2.nano','t2.micro','t2.small','t2.medium','t2.large','t2.xlarge','t2.2xlarge','m4.large','m4.xlarge','m4.2xlarge','m4.4xlarge','m4.10xlarge','m4.16xlarge','m3.medium','m3.large','m3.xlarge','m3.2xlarge',
+    'c4.large','c4.xlarge','c4.2xlarge','c4.4xlarge','c4.8xlarge','c3.large','c3.xlarge','c3.2xlarge','c3.4xlarge','c3.8xlarge','x1.32xlarge','x1.16xlarge','r4.large','r4.xlarge','r4.2xlarge','r4.4xlarge','r4.8xlarge','r4.16xlarge','r3.large','r3.xlarge','r3.2xlarge','r3.4xlarge','r3.8xlarge',
+    'p2.xlarge','p2.8xlarge','p2.16xlarge','g2.2xlarge','g2.8xlarge','f1.2xlarge','f1.16xlarge','i3.large','i3.xlarge','i3.2xlarge','i3.4xlarge','i3.8xlarge','i3.16xlarge','d2.xlarge','d2.2xlarge','d2.4xlarge','d2.8xlarge']} ])
     regionData.append(instances)
-#pprint.pprint(instances)
+
 regionReservations = [z['Reservations'] for z in regionData]
 
 print ("Number of region rev ", len(regionReservations)) #response is a list
-#print (Reservations)
+
 
 
 InstanceTypeAz = []
@@ -38,10 +40,8 @@ for rr in regionReservations:
         InstanceTypeAz.extend([Create_Data(inst) for inst in res['Instances']])
 
 
-#print(InstanceTypeAz)
-pprint.pprint(collections.Counter(InstanceTypeAz))
-#print (len(InstanceTypeAz))
 
-#pprint.pprint(InstanceTypeAz)
+pprint.pprint(collections.Counter(InstanceTypeAz))
+
 
 
